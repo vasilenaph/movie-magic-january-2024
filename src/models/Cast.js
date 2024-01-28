@@ -1,6 +1,6 @@
 const { model } = require("mongoose");
 
-const mongoose = requiere('mongoose');
+const mongoose = require('mongoose');
 
 const castSchema = new mongoose.Schema({
     name: {
