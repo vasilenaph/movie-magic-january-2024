@@ -13,7 +13,7 @@ exports.search = (title, genre, year) => {
     }
 
     if (genre) {
-        query.genre = genre.toLowercase();
+        query.genre = genre.toLowerCase();
     }
 
     if (year) {
@@ -30,9 +30,9 @@ exports.create = (movieData) => Movie.create(movieData);
 exports.attach = async (movieId, castId) => {
     // return Movie.findByIdAndUpdate(movieId, {$push: {casts: castId }});
     const movie = await this.getOne(movieId);
-
+    const cast = await Cast.findById(castId);
+    
     // This is optional and we don't need it in this case 
-    // const cast = await Cast.findById(castId);
     // movie.casts.push(movie);
     // await cast.save();
 
