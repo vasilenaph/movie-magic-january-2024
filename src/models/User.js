@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+const {Schema, model, MongooseError} = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     email: {
         type: String,
         required: true,
@@ -15,10 +15,18 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre('save', async function() {
     const hash = await bcrypt.hash(this.password, 12);
-    
+
     this.password = hash;
 });
 
-const User = mongoose.model('User', userSchema);
+userSchema.virtual('rePassword')
+    .set(function(value) {
+        // Validate
+        if (value !== this.password) {
+            throw new MongooseError(`Password doesn\'t mtach!`);
+        }
+    });
+
+const User = model('User', userSchema);
 
 module.exports = User;
