@@ -7,13 +7,14 @@ const { isAuth } = require('../middlewares/authMiddleware');
 router.get('/movies/:movieId', async (req, res) => {
     const movieId = req.params.movieId;
     const movie = await movieService.getOne(movieId).lean();
+    const isOwner = movie.owner == req.user._id;
     // const casts = await castService.getByIds(movie.casts).lean();
     // movie.rating = new Array(Number(movie.rating)).fill(true);
 
     // TODO: This is not perfect, use handlebars helpers
     movie.ratingStars = '&#x2605;'.repeat(movie.rating);
 
-    res.render('movie/details', { movie });
+    res.render('movie/details', { movie, isOwner });
 });
 
 router.get('/create', isAuth, (req, res) => {
@@ -21,7 +22,10 @@ router.get('/create', isAuth, (req, res) => {
 });
 
 router.post('/create', isAuth, async (req, res) => {
-    const newMovie = req.body;
+    const newMovie = {
+        ...req.body,
+        owner: req.user._id,
+    };
     
     try {
         await movieService.create(newMovie);
